@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <book.h>
 
 namespace Ui {
 class MainWindow;
@@ -26,13 +27,18 @@ private slots:
 
     void on_firstPage_clicked();
 
-//    Action on Menu
+    // Action on Menu
     void on_actionAbout_triggered();
 
     void on_actionOpen_triggered();
 
+    // Display
+    void refreshScreen(QString path, QString pageText);
+    void msgBox(QString msg);
+
 private:
     Ui::MainWindow *ui;
+    Book* currentBook;
 };
 
 #endif // MAINWINDOW_H
