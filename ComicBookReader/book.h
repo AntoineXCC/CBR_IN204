@@ -8,13 +8,17 @@
 class Book : public QObject
 {
     Q_OBJECT
+//private:
 private:
+    static QStringList imageFilters;
+
     // Path to the dir with all the images
     QString pathToDir;
     QVector<QString> tabPathToImage;
+    QString ratio;
     int currPage;
     int totalPage;
-    static QStringList imageFilters;
+
 
 public:
     Book();
@@ -30,6 +34,9 @@ public:
     void previous();
     void last();
     void first();
+    QString getCurrImagePath();
+    QString getRatio();
+    void setRatio(QString r);
 
 signals:
     // Changing the page to display on the main screen

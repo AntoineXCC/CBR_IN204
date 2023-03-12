@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "book.h"
 #include "archive.h"
+#include "image.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -9,6 +10,7 @@
 #include <QPixmap>
 #include <QDir>
 #include <iostream>
+#include <QScrollArea>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -17,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setMinimumSize(800,600);
     resize(1000,500);
+    Image::setSize(ui->screen->width(), ui->screen->height());
     setWindowTitle(tr("Comic Book Reader"));
 }
 
@@ -25,12 +28,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setImage(QPixmap image) {
+    ui->screen->setPixmap(image);
+}
+
 void MainWindow::refreshScreen(QString path) {
     // Display image
     QPixmap image(path);
-    int w = ui->screen->width();
-    int h = ui->screen->height();
-    ui->screen->setPixmap(image.scaled(w,h,Qt::KeepAspectRatio));
+    QPixmap scaledImage = Image::resize(image, currentBook->getRatio());
+
+    MainWindow::setImage(scaledImage);
 }
 
 void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
@@ -93,7 +100,6 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionExtract_triggered()
 {
-//    QMessageBox::aboutQt(this);
     QString zipPath = QFileDialog::getOpenFileName(this, tr("Choix archivre", ""));
     Unzip(zipPath);
 }
@@ -107,4 +113,20 @@ void MainWindow::on_actionCombine_triggered()
     dir.setFilter(QDir::Files);
     QFileInfoList fileList = dir.entryInfoList();
     Zip(fileList, zipPath);
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    Image::setSize(ui->screen->width(), ui->screen->height());
+    std::cout<<ui->screen->width()<< ui->screen->height()<<std::endl;
+    if (ui->screen->pixmap()!=0) {
+        QPixmap image(currentBook->getCurrImagePath());
+        MainWindow::setImage(Image::resize(image, currentBook->getRatio()));
+    }
+}
+
+
+void MainWindow::on_comboBox_activated(const QString &r)
+{
+    currentBook->setRatio(r);
 }

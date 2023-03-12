@@ -8,7 +8,7 @@
 
 QStringList Book::imageFilters =  {"*.jpg", "bmp"};
 
-Book::Book() : QObject(), pathToDir(""), currPage(0), totalPage(0) {
+Book::Book() : QObject(), pathToDir(""), currPage(0), totalPage(0), ratio(QString("Fit page")) {
 
 }
 
@@ -66,4 +66,16 @@ void Book::last() {
     currPage=totalPage-1;
     emit pageChanged(tabPathToImage[currPage]);
     emit changePageCounter(currPage, 0);
+}
+
+QString Book::getCurrImagePath() {
+    return tabPathToImage[currPage];
+}
+
+QString Book::getRatio() {
+    return ratio;
+}
+
+void Book::setRatio(QString r) {
+    ratio = r;
 }
