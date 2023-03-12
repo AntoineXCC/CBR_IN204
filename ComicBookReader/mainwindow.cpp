@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <book.h>
+#include "book.h"
+#include "archive.h"
+
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QFile>
 #include <QPixmap>
+#include <QDir>
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,15 +25,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::refreshScreen(QString path, QString pageText) {
+void MainWindow::refreshScreen(QString path) {
     // Display image
     QPixmap image(path);
     int w = ui->screen->width();
     int h = ui->screen->height();
     ui->screen->setPixmap(image.scaled(w,h,Qt::KeepAspectRatio));
+}
 
-    // Display page
-    ui->pageDisplay->setText(pageText);
+void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
+    if (totalPage!=0) {
+        ui->totalPageDisplay->setText(QString("/") + QString::number(totalPage));
+    }
+    ui->currPageDisplay->setNum(currPage+1);
 }
 
 void MainWindow::msgBox(QString msg) {
@@ -62,10 +69,6 @@ void MainWindow::on_firstPage_clicked()
     currentBook->first();
 }
 
-void MainWindow::on_actionAbout_triggered()
-{
-    QMessageBox::aboutQt(this);
-}
 
 
 // Open menu
@@ -73,8 +76,35 @@ void MainWindow::on_actionOpen_triggered()
 {
 //    QString filter = "All File (*.*) ;; CBR File (*.cbr) ;; CBZ File (*.cbz)";
     QString path = QFileDialog::getExistingDirectory(this, "", "../data");
+
+
     currentBook = new Book();
-    connect(currentBook, SIGNAL(pageChanged(QString, QString)), this, SLOT(refreshScreen(QString,QString) ));
+    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen(QString) ));
+    connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
     connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
     currentBook->setPathToDir(path);
+}
+
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::aboutQt(this);
+}
+
+void MainWindow::on_actionExtract_triggered()
+{
+//    QMessageBox::aboutQt(this);
+    QString zipPath = QFileDialog::getOpenFileName(this, tr("Choix archivre", ""));
+    Unzip(zipPath);
+}
+
+void MainWindow::on_actionCombine_triggered()
+{
+    QString filter = "CBR File (*.cbr) ;; CBZ File (*.cbz)";
+    QString path = QFileDialog::getExistingDirectory(this, tr("Choix lieu extraction"), "../data");
+    QString zipPath = QFileDialog::getSaveFileName(this, tr("Choix lieu archivage"), "", QString("All File (*.*) ;; ") + filter);
+    QDir dir(path);
+    dir.setFilter(QDir::Files);
+    QFileInfoList fileList = dir.entryInfoList();
+    Zip(fileList, zipPath);
 }

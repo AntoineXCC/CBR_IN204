@@ -26,7 +26,8 @@ void Book::setPathToDir(QString path) {
     }
     QString pageText;
     pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
-    emit pageChanged(tabPathToImage[currPage], pageText);
+    emit pageChanged(tabPathToImage[currPage]);
+    emit changePageCounter(currPage, totalPage);
 }
 
 void Book::initialise() {
@@ -36,9 +37,9 @@ void Book::initialise() {
 void Book::next() {
     if (currPage<totalPage-1) {
         currPage = currPage + 1;
-        QString pageText;
-        pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
-        emit pageChanged(tabPathToImage[currPage], pageText);
+        emit pageChanged(tabPathToImage[currPage]);
+        emit changePageCounter(currPage, 0);
+
     } else {
         emit infoMsgBox("Last page");
     }
@@ -47,9 +48,8 @@ void Book::next() {
 void Book::previous() {
     if (currPage>0) {
         currPage = currPage - 1;
-        QString pageText;
-        pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
-        emit pageChanged(tabPathToImage[currPage], pageText);
+        emit pageChanged(tabPathToImage[currPage]);
+        emit changePageCounter(currPage, 0);
     } else {
         emit infoMsgBox("First page");
     }
@@ -58,14 +58,12 @@ void Book::previous() {
 
 void Book::first() {
     currPage=0;
-    QString pageText;
-    pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
-    emit pageChanged(tabPathToImage[currPage], pageText);
+    emit pageChanged(tabPathToImage[currPage]);
+    emit changePageCounter(currPage, 0);
 }
 
 void Book::last() {
     currPage=totalPage-1;
-    QString pageText;
-    pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
-    emit pageChanged(tabPathToImage[currPage], pageText);
+    emit pageChanged(tabPathToImage[currPage]);
+    emit changePageCounter(currPage, 0);
 }

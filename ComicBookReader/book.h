@@ -32,7 +32,10 @@ public:
     void first();
 
 signals:
-    void pageChanged(QString path, QString pageText);
+    // Changing the page to display on the main screen
+    void pageChanged(QString path);
+    // Changing the page counter
+    void changePageCounter(int currPage, int totalPage);
     void infoMsgBox(QString msg);
 
 

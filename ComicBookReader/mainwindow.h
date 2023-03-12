@@ -29,12 +29,16 @@ private slots:
 
     // Action on Menu
     void on_actionAbout_triggered();
-
     void on_actionOpen_triggered();
+    void on_actionExtract_triggered();
+    void on_actionCombine_triggered();
 
     // Display
-    void refreshScreen(QString path, QString pageText);
+    void refreshScreen(QString path);
+    void refreshPage(int currPage, int totalPage);
     void msgBox(QString msg);
+
+
 
 private:
     Ui::MainWindow *ui;
