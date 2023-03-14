@@ -13,6 +13,9 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+private:
+    Ui::MainWindow *ui;
+    Book* currentBook;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -23,6 +26,7 @@ private slots:
     void on_nextPage_clicked();
     void on_lastPage_clicked();
     void on_firstPage_clicked();
+    void on_comboBox_activated(const QString &arg1);
 
     // Action on Menu
     void on_actionClose_triggered();
@@ -33,17 +37,14 @@ private slots:
 
     // Display
     void setImage(QPixmap image);
-    void refreshScreen(QString path);
+    void refreshScreen();
     void refreshPage(int currPage, int totalPage);
     void msgBox(QString msg);
 
     void resizeEvent(QResizeEvent *event);
 
-    void on_comboBox_activated(const QString &arg1);
-
-private:
-    Ui::MainWindow *ui;
-    Book* currentBook;
+    // Temp
+    void on_pushButton_clicked();
 
 signals:
 };

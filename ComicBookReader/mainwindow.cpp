@@ -19,41 +19,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setMinimumSize(800,600);
     resize(1000,500);
-    Image::setSize(ui->screen->width(), ui->screen->height());
+    Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
+    ui->screen->resize(ui->scrollArea->width(), ui->scrollArea->height());
     setWindowTitle(tr("Comic Book Reader"));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::setImage(QPixmap image) {
-    ui->screen->setPixmap(image);
-}
-
-void MainWindow::refreshScreen(QString path) {
-    // Display image
-    QPixmap image(path);
-    QPixmap scaledImage = Image::resize(image, currentBook->getRatio());
-
-    MainWindow::setImage(scaledImage);
-}
-
-void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
-    if (totalPage!=0) {
-        ui->totalPageDisplay->setText(QString("/") + QString::number(totalPage));
-    }
-    ui->currPageDisplay->setNum(currPage+1);
-}
-
-void MainWindow::msgBox(QString msg) {
-    QMessageBox::information(this, "", msg);
-}
-
-void MainWindow::on_actionClose_triggered()
-{
-    QApplication::quit();
+    delete currentBook;
 }
 
 void MainWindow::on_previousPage_clicked()
@@ -76,9 +50,12 @@ void MainWindow::on_firstPage_clicked()
     currentBook->first();
 }
 
+// Menu
+void MainWindow::on_actionClose_triggered()
+{
+    QApplication::quit();
+}
 
-
-// Open menu
 void MainWindow::on_actionOpen_triggered()
 {
 //    QString filter = "All File (*.*) ;; CBR File (*.cbr) ;; CBZ File (*.cbz)";
@@ -86,7 +63,7 @@ void MainWindow::on_actionOpen_triggered()
 
 
     currentBook = new Book();
-    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen(QString) ));
+    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen() ));
     connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
     connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
     currentBook->setPathToDir(path);
@@ -116,17 +93,53 @@ void MainWindow::on_actionCombine_triggered()
 }
 
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
-    Image::setSize(ui->screen->width(), ui->screen->height());
-    std::cout<<ui->screen->width()<< ui->screen->height()<<std::endl;
-    if (ui->screen->pixmap()!=0) {
-        QPixmap image(currentBook->getCurrImagePath());
-        MainWindow::setImage(Image::resize(image, currentBook->getRatio()));
+
+void MainWindow::setImage(QPixmap image) {
+    ui->screen->setPixmap(image);
+}
+
+
+/*                  Adapter alignement de l'image en fonction du ratio également  ?     */
+void MainWindow::refreshScreen() {
+    // Display image
+    QPixmap image(currentBook->getCurrImagePath());
+    QPixmap scaledImage = Image::resize(image, currentBook->getRatio());
+    setImage(scaledImage);
+}
+
+void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
+    if (totalPage!=0) {
+        ui->totalPageDisplay->setText(QString("/") + QString::number(totalPage));
     }
+    ui->currPageDisplay->setNum(currPage+1);
+}
+
+void MainWindow::msgBox(QString msg) {
+    QMessageBox::information(this, "", msg);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
+    if (ui->screen->pixmap()!=0) {
+        refreshScreen();
+    }
+    std::cout<< "Taille screen" << ui->screen->width() << " et "<< ui->screen->height()<<std::endl;
+    std::cout<< "Taille scrollArea" << ui->scrollArea->width() << " et "<< ui->scrollArea->height()<<std::endl;
 }
 
 
 void MainWindow::on_comboBox_activated(const QString &r)
 {
     currentBook->setRatio(r);
+    refreshScreen();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QString path = QString("/home/antoine/Cours/IN204/Projet/Projet CBR/data/Captain Marvel");
+    currentBook = new Book();
+    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen() ));
+    connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
+    connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
+    currentBook->setPathToDir(path);
 }

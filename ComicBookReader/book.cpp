@@ -1,12 +1,11 @@
 #include "book.h"
+#include "image.h"
 #include <QString>
 #include <QDir>
 #include <ui_mainwindow.h>
 #include <QPixmap>
 #include <QMessageBox>
 #include <iostream>
-
-QStringList Book::imageFilters =  {"*.jpg", "bmp"};
 
 Book::Book() : QObject(), pathToDir(""), currPage(0), totalPage(0), ratio(QString("Fit page")) {
 
@@ -19,7 +18,7 @@ Book::~Book() {
 void Book::setPathToDir(QString path) {
     pathToDir = path;
     QDir dir(path);
-    dir.setNameFilters(imageFilters);
+    dir.setNameFilters(Image::imageFilters);
     foreach (QFileInfo var, dir.entryInfoList()) {
         tabPathToImage.append(var.absoluteFilePath());
         totalPage = totalPage + 1;
