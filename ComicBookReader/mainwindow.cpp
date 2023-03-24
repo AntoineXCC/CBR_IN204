@@ -11,6 +11,7 @@
 #include <QDir>
 #include <iostream>
 #include <QScrollArea>
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -19,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setMinimumSize(800,600);
     resize(1000,500);
+    /*           A adapter, ou à changer la policy                  */
+    ui->scrollArea->resize(978, 483);
     Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
     ui->screen->resize(ui->scrollArea->width(), ui->scrollArea->height());
     setWindowTitle(tr("Comic Book Reader"));
@@ -99,12 +102,19 @@ void MainWindow::setImage(QPixmap image) {
 }
 
 
-/*                  Adapter alignement de l'image en fonction du ratio également  ?     */
 void MainWindow::refreshScreen() {
     // Display image
+    QSize valRatio;
     QPixmap image(currentBook->getCurrImagePath());
-    QPixmap scaledImage = Image::resize(image, currentBook->getRatio());
+    if (ui->screen->pixmap()==0) {
+        valRatio = image.size();
+    } else {
+        valRatio = ui->screen->pixmap()->size();
+    }
+    QPixmap scaledImage = Image::resize(image, currentBook->getRatio(), valRatio);
     setImage(scaledImage);
+    ui->scrollArea->verticalScrollBar()->setSliderPosition(ui->scrollArea->verticalScrollBar()->minimum());
+    ui->scrollArea->horizontalScrollBar()->setSliderPosition(ui->scrollArea->horizontalScrollBar()->minimum());
 }
 
 void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
@@ -123,8 +133,8 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (ui->screen->pixmap()!=0) {
         refreshScreen();
     }
-    std::cout<< "Taille screen" << ui->screen->width() << " et "<< ui->screen->height()<<std::endl;
-    std::cout<< "Taille scrollArea" << ui->scrollArea->width() << " et "<< ui->scrollArea->height()<<std::endl;
+//    std::cout<< "Taille screen" << ui->screen->width() << " et "<< ui->screen->height()<<std::endl;
+//    std::cout<< "Taille scrollArea" << ui->scrollArea->width() << " et "<< ui->scrollArea->height()<<std::endl;
 }
 
 
@@ -132,6 +142,7 @@ void MainWindow::on_comboBox_activated(const QString &r)
 {
     currentBook->setRatio(r);
     refreshScreen();
+
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -142,4 +153,20 @@ void MainWindow::on_pushButton_clicked()
     connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
     connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
     currentBook->setPathToDir(path);
+}
+
+void MainWindow::on_ZoomOut_clicked()
+{
+    currentBook->setRatio(QString("Custom"));
+    ui->comboBox->setCurrentIndex(2);
+    QPixmap image(currentBook->getCurrImagePath());
+    setImage(Image::zoomOut(image, ui->screen->pixmap()->size()));
+}
+
+void MainWindow::on_ZoomIn_clicked()
+{
+    currentBook->setRatio(QString("Custom"));
+    ui->comboBox->setCurrentIndex(2);
+    QPixmap image(currentBook->getCurrImagePath());
+    setImage(Image::zoomIn(image, ui->screen->pixmap()->size()));
 }

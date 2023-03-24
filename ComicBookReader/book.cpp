@@ -23,8 +23,6 @@ void Book::setPathToDir(QString path) {
         tabPathToImage.append(var.absoluteFilePath());
         totalPage = totalPage + 1;
     }
-    QString pageText;
-    pageText = QString::number(currPage+1) + QString("/") + QString::number(totalPage);
     emit pageChanged(tabPathToImage[currPage]);
     emit changePageCounter(currPage, totalPage);
 }

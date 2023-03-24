@@ -13,7 +13,7 @@ private:
     QString pathToDir;
     // Vector of each image's path
     QVector<QString> tabPathToImage;
-    // Currently performed zoom on the book : can be a percentage, "Fit page" (eq. to fit height) or "Fit width"
+    // Currently performed zoom on the book : can be "Custom", "Fit page" (eq. to fit height) or "Fit width"
     QString ratio;
     // Current page of the book
     int currPage;

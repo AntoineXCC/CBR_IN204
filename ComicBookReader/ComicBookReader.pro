@@ -14,14 +14,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-        book.cpp \
-        archive.cpp \
-    image.cpp
+    mainwindow.cpp \
+    book.cpp \
+    archive.cpp \
+    image.cpp \
 
 HEADERS  += mainwindow.h \
-        book.h \
-        archive.h \
-    image.h
+    book.h \
+    archive.h \
+    image.h \
 
 FORMS    += mainwindow.ui

@@ -11,6 +11,8 @@ private:
     static int width;
     // Height of the screen
     static int height;
+    // Scale factor when resizing
+    static double scale;
 
 public:
     // Filters for accepted image extensions
@@ -19,7 +21,9 @@ public:
     static void setSize(int w, int h);
 
     // Resize an image according to the current zoom performed
-    static QPixmap resize(QPixmap image, QString ratio);
+    static QPixmap resize(QPixmap image, QString ratio, QSize valRatio);
+    static QPixmap zoomIn(QPixmap image, QSize valRatio);
+    static QPixmap zoomOut(QPixmap image, QSize valRatio);
 };
 
 #endif // IMAGE_H

@@ -33,7 +33,7 @@
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -60,7 +60,7 @@
        <property name="geometry">
         <rect>
          <x>453</x>
-         <y>261</y>
+         <y>90</y>
          <width>16</width>
          <height>16</height>
         </rect>
@@ -220,7 +220,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
@@ -229,26 +229,30 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="ZoomIn">
+        <property name="text">
+         <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ZoomOut">
+        <property name="text">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QComboBox" name="comboBox">
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="maxVisibleItems">
          <number>10</number>
         </property>
         <item>
          <property name="text">
-          <string>200 %</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>100 %</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>50 %</string>
+          <string>Fit page</string>
          </property>
         </item>
         <item>
@@ -258,7 +262,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Fit page</string>
+          <string>Custom</string>
          </property>
         </item>
        </widget>
@@ -295,7 +299,30 @@
     <addaction name="separator"/>
     <addaction name="actionClose"/>
    </widget>
+   <widget class="QMenu" name="menuOption">
+    <property name="title">
+     <string>Option</string>
+    </property>
+    <widget class="QMenu" name="menuDisplay_Mode">
+     <property name="title">
+      <string>Page Mode</string>
+     </property>
+     <addaction name="actionSingle_Page"/>
+     <addaction name="actionDouble_Page"/>
+    </widget>
+    <widget class="QMenu" name="menuImage_Mode">
+     <property name="title">
+      <string>Image Mode</string>
+     </property>
+     <addaction name="actionRaw"/>
+     <addaction name="actionText_focused"/>
+     <addaction name="actionDrawing_focused"/>
+    </widget>
+    <addaction name="menuDisplay_Mode"/>
+    <addaction name="menuImage_Mode"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuOption"/>
   </widget>
   <widget class="QToolBar" name="tabs">
    <property name="enabled">
@@ -324,6 +351,9 @@
    <property name="text">
     <string>Open</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionClose">
    <property name="text">
@@ -343,6 +373,31 @@
   <action name="actionAbout">
    <property name="text">
     <string>AboutQt</string>
+   </property>
+  </action>
+  <action name="actionSingle_Page">
+   <property name="text">
+    <string>Single page</string>
+   </property>
+  </action>
+  <action name="actionDouble_Page">
+   <property name="text">
+    <string>Double page</string>
+   </property>
+  </action>
+  <action name="actionRaw">
+   <property name="text">
+    <string>Raw</string>
+   </property>
+  </action>
+  <action name="actionText_focused">
+   <property name="text">
+    <string>Text focused</string>
+   </property>
+  </action>
+  <action name="actionDrawing_focused">
+   <property name="text">
+    <string>Drawing focused</string>
    </property>
   </action>
  </widget>

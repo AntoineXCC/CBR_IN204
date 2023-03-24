@@ -26,7 +26,7 @@ private slots:
     void on_nextPage_clicked();
     void on_lastPage_clicked();
     void on_firstPage_clicked();
-    void on_comboBox_activated(const QString &arg1);
+    void on_comboBox_activated(const QString &r);
 
     // Action on Menu
     void on_actionClose_triggered();
@@ -45,6 +45,15 @@ private slots:
 
     // Temp
     void on_pushButton_clicked();
+
+    // Shortcuts
+
+
+
+
+    void on_ZoomOut_clicked();
+
+    void on_ZoomIn_clicked();
 
 signals:
 };
