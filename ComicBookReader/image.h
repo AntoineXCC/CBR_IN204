@@ -24,6 +24,8 @@ public:
     static QPixmap resize(QPixmap image, QString ratio, QSize valRatio);
     static QPixmap zoomIn(QPixmap image, QSize valRatio);
     static QPixmap zoomOut(QPixmap image, QSize valRatio);
+
+    static QPixmap combine(QPixmap image1, QPixmap image2);
 };
 
 #endif // IMAGE_H

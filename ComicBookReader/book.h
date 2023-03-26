@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QVector>
+#include <QPixmap>
 
 class Book : public QObject
 {
@@ -19,6 +20,9 @@ private:
     int currPage;
     // Number of pages
     int totalPage;
+    // SingleMode true ? Otherwise doubleMode
+    bool singleMode;
+    QPixmap currImage;
 
 
 public:
@@ -29,6 +33,8 @@ public:
     void setPathToDir (QString path);
     // Set the performed zoom
     void setRatio(QString r);
+    // Set the page mode
+    void setSingleMode(bool val);
 
     // Initalise the comic book -> Not used
     void initialise();
@@ -47,13 +53,15 @@ public:
     // Get the performed zoom
     QString getRatio();
 
+    QPixmap getCurrImage();
+    void changeCurrImage();
+
 
 signals:
     // Changing the page to display on the main screen
     void pageChanged(QString path);
     // Changing the page counter
     void changePageCounter(int currPage, int totalPage);
-
 
     void infoMsgBox(QString msg);
 

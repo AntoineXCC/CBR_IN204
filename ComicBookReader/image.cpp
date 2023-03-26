@@ -1,5 +1,6 @@
 #include "image.h"
 #include <QString>
+#include <QPainter>
 #include <iostream>
 
 int Image::width = 0;
@@ -30,4 +31,16 @@ QPixmap Image::zoomIn(QPixmap image, QSize valRatio) {
 
 QPixmap Image::zoomOut(QPixmap image, QSize valRatio) {
     return resize(image, QString("Custom"), valRatio/1.25);
+}
+
+QPixmap Image::combine(QPixmap image1, QPixmap image2) {
+    QImage image(image1.width() + image2.width(), image1.height(), QImage::Format_ARGB32_Premultiplied);
+    image.fill(QColor(Qt::transparent));
+
+    // Paint everything in a pixmap.
+    QPixmap pixmap = QPixmap::fromImage(image);
+    QPainter paint(&pixmap);
+    paint.drawPixmap(0, 0, image1);
+    paint.drawPixmap(image1.width(), 0, image2);
+    return pixmap;
 }

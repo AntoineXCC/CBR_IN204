@@ -7,7 +7,9 @@
 #include <QMessageBox>
 #include <iostream>
 
-Book::Book() : QObject(), pathToDir(""), currPage(0), totalPage(0), ratio(QString("Fit page")) {
+Book::Book() : QObject(), pathToDir(""),
+    currPage(0), totalPage(0), ratio(QString("Fit page")),
+    singleMode(true) {
 
 }
 
@@ -23,17 +25,20 @@ void Book::setPathToDir(QString path) {
         tabPathToImage.append(var.absoluteFilePath());
         totalPage = totalPage + 1;
     }
+    changeCurrImage();
     emit pageChanged(tabPathToImage[currPage]);
     emit changePageCounter(currPage, totalPage);
 }
 
-void Book::initialise() {
-
-}
-
 void Book::next() {
-    if (currPage<totalPage-1) {
-        currPage = currPage + 1;
+    if ((currPage<totalPage-1 && singleMode) || currPage<totalPage-2 ) {
+        if (singleMode || currPage+1==totalPage-1) {
+            currPage = currPage + 1;
+        } else {
+            currPage = currPage + 2;
+        }
+
+        changeCurrImage();
         emit pageChanged(tabPathToImage[currPage]);
         emit changePageCounter(currPage, 0);
 
@@ -44,7 +49,12 @@ void Book::next() {
 
 void Book::previous() {
     if (currPage>0) {
-        currPage = currPage - 1;
+        if (singleMode || currPage-1==0) {
+            currPage = currPage - 1;
+        } else {
+            currPage = currPage - 2;
+        }
+        changeCurrImage();
         emit pageChanged(tabPathToImage[currPage]);
         emit changePageCounter(currPage, 0);
     } else {
@@ -55,12 +65,14 @@ void Book::previous() {
 
 void Book::first() {
     currPage=0;
+    changeCurrImage();
     emit pageChanged(tabPathToImage[currPage]);
     emit changePageCounter(currPage, 0);
 }
 
 void Book::last() {
     currPage=totalPage-1;
+    changeCurrImage();
     emit pageChanged(tabPathToImage[currPage]);
     emit changePageCounter(currPage, 0);
 }
@@ -75,4 +87,23 @@ QString Book::getRatio() {
 
 void Book::setRatio(QString r) {
     ratio = r;
+}
+
+void Book::setSingleMode(bool val) {
+    singleMode = val;
+    changeCurrImage();
+    emit pageChanged(tabPathToImage[currPage]);
+    emit changePageCounter(currPage, 0);
+}
+
+void Book::changeCurrImage() {
+    if (singleMode || currPage==totalPage-1) {
+        currImage = QPixmap(tabPathToImage[currPage]);
+    } else {
+        currImage = Image::combine(QPixmap(tabPathToImage[currPage]), tabPathToImage[currPage+1] );
+    }
+}
+
+QPixmap Book::getCurrImage() {
+    return currImage;
 }

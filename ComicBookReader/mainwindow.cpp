@@ -103,9 +103,10 @@ void MainWindow::setImage(QPixmap image) {
 
 
 void MainWindow::refreshScreen() {
+    if (currentBook==0) return;
     // Display image
     QSize valRatio;
-    QPixmap image(currentBook->getCurrImagePath());
+    QPixmap image = currentBook->getCurrImage();
     if (ui->screen->pixmap()==0) {
         valRatio = image.size();
     } else {
@@ -130,9 +131,7 @@ void MainWindow::msgBox(QString msg) {
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
     Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
-    if (ui->screen->pixmap()!=0) {
-        refreshScreen();
-    }
+    refreshScreen();
 //    std::cout<< "Taille screen" << ui->screen->width() << " et "<< ui->screen->height()<<std::endl;
 //    std::cout<< "Taille scrollArea" << ui->scrollArea->width() << " et "<< ui->scrollArea->height()<<std::endl;
 }
@@ -169,4 +168,17 @@ void MainWindow::on_ZoomIn_clicked()
     ui->comboBox->setCurrentIndex(2);
     QPixmap image(currentBook->getCurrImagePath());
     setImage(Image::zoomIn(image, ui->screen->pixmap()->size()));
+}
+
+void MainWindow::on_actionSingle_Page_triggered()
+{
+    currentBook->setSingleMode(true);
+    refreshScreen();
+}
+
+
+void MainWindow::on_actionDouble_Page_triggered()
+{
+    currentBook->setSingleMode(false);
+    refreshScreen();
 }

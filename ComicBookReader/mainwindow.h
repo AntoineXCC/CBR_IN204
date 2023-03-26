@@ -34,6 +34,8 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionExtract_triggered();
     void on_actionCombine_triggered();
+    void on_actionSingle_Page_triggered();
+    void on_actionDouble_Page_triggered();
 
     // Display
     void setImage(QPixmap image);
@@ -54,6 +56,8 @@ private slots:
     void on_ZoomOut_clicked();
 
     void on_ZoomIn_clicked();
+
+
 
 signals:
 };
