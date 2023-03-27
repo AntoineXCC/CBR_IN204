@@ -13,13 +13,11 @@ void Image::setSize(int w, int h) {
     height = h;
 }
 
-
-// Pb avec le scaling width lorsque 100 % ?
 QPixmap Image::resize(QPixmap image, QString ratio, QSize valRatio) {
     if (ratio==QString("Fit page")) {
-        return image.scaledToHeight(height*0.98);
+        return image.scaledToHeight(height);
     } else if (ratio==QString("Fit width")) {
-        return image.scaledToWidth(width*0.98);
+        return image.scaledToWidth(width);
     } else {
         return image.scaled(valRatio);
     }

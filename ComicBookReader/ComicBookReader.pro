@@ -12,16 +12,17 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ComicBookReader
 TEMPLATE = app
 
+LIBS += -larchive
 
 SOURCES += main.cpp\
     mainwindow.cpp \
     book.cpp \
-    archive.cpp \
     image.cpp \
+    archiveManager.cpp
 
 HEADERS  += mainwindow.h \
     book.h \
-    archive.h \
     image.h \
+    archiveManager.h
 
 FORMS    += mainwindow.ui

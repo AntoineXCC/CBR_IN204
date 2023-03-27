@@ -1,8 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "book.h"
-#include "archive.h"
+#include "archiveManager.h"
 #include "image.h"
+#include "clickablelabel.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -20,10 +21,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setMinimumSize(800,600);
     resize(1000,500);
-    /*           A adapter, ou à changer la policy                  */
     ui->scrollArea->resize(978, 483);
     Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
     ui->screen->resize(ui->scrollArea->width(), ui->scrollArea->height());
+
     setWindowTitle(tr("Comic Book Reader"));
 }
 

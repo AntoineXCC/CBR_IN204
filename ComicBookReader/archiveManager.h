@@ -12,5 +12,6 @@
 
 void Unzip(QString zipPath);
 bool Zip(QFileInfoList fileList, QString zipPath);
+int copy_data(struct archive *ar, struct archive *aw);
 
 #endif // ARCHIVE_H
