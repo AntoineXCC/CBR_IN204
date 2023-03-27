@@ -66,8 +66,7 @@ void MainWindow::on_actionOpen_triggered()
 
 
     currentBook = new Book();
-    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen() ));
-    connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
+    connect(currentBook, SIGNAL(pageChanged(bool)), this, SLOT(refreshScreen(bool) ));
     connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
     currentBook->setPathToDir(path);
 }
@@ -102,7 +101,7 @@ void MainWindow::setImage(QPixmap image) {
 }
 
 
-void MainWindow::refreshScreen() {
+void MainWindow::refreshScreen(bool numPageChanged) {
     if (currentBook==0) return;
     // Display image
     QSize valRatio;
@@ -116,13 +115,10 @@ void MainWindow::refreshScreen() {
     setImage(scaledImage);
     ui->scrollArea->verticalScrollBar()->setSliderPosition(ui->scrollArea->verticalScrollBar()->minimum());
     ui->scrollArea->horizontalScrollBar()->setSliderPosition(ui->scrollArea->horizontalScrollBar()->minimum());
-}
-
-void MainWindow::refreshPage(int currPage=0, int totalPage=0) {
-    if (totalPage!=0) {
-        ui->totalPageDisplay->setText(QString("/") + QString::number(totalPage));
+    if (numPageChanged) {
+        ui->totalPageDisplay->setText(QString("/") + QString::number(currentBook->getTotalPage()));
+        ui->currPageDisplay->setNum(currentBook->getCurrPage()+1);
     }
-    ui->currPageDisplay->setNum(currPage+1);
 }
 
 void MainWindow::msgBox(QString msg) {
@@ -131,7 +127,7 @@ void MainWindow::msgBox(QString msg) {
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
     Image::setSize(ui->scrollArea->width(), ui->scrollArea->height());
-    refreshScreen();
+    refreshScreen(false);
 //    std::cout<< "Taille screen" << ui->screen->width() << " et "<< ui->screen->height()<<std::endl;
 //    std::cout<< "Taille scrollArea" << ui->scrollArea->width() << " et "<< ui->scrollArea->height()<<std::endl;
 }
@@ -140,7 +136,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 void MainWindow::on_comboBox_activated(const QString &r)
 {
     currentBook->setRatio(r);
-    refreshScreen();
+    refreshScreen(false);
 
 }
 
@@ -148,8 +144,7 @@ void MainWindow::on_pushButton_clicked()
 {
     QString path = QString("/home/antoine/Cours/IN204/Projet/Projet CBR/data/Captain Marvel");
     currentBook = new Book();
-    connect(currentBook, SIGNAL(pageChanged(QString)), this, SLOT(refreshScreen() ));
-    connect(currentBook, SIGNAL(changePageCounter(int,int)), this, SLOT(refreshPage(int,int)));
+    connect(currentBook, SIGNAL(pageChanged(bool)), this, SLOT(refreshScreen(bool) ));
     connect(currentBook, SIGNAL(infoMsgBox(QString)), this, SLOT(msgBox(QString)));
     currentBook->setPathToDir(path);
 }
@@ -158,7 +153,7 @@ void MainWindow::on_ZoomOut_clicked()
 {
     currentBook->setRatio(QString("Custom"));
     ui->comboBox->setCurrentIndex(2);
-    QPixmap image(currentBook->getCurrImagePath());
+    QPixmap image = currentBook->getCurrImage();
     setImage(Image::zoomOut(image, ui->screen->pixmap()->size()));
 }
 
@@ -166,19 +161,19 @@ void MainWindow::on_ZoomIn_clicked()
 {
     currentBook->setRatio(QString("Custom"));
     ui->comboBox->setCurrentIndex(2);
-    QPixmap image(currentBook->getCurrImagePath());
+    QPixmap image = currentBook->getCurrImage();
     setImage(Image::zoomIn(image, ui->screen->pixmap()->size()));
 }
 
 void MainWindow::on_actionSingle_Page_triggered()
 {
     currentBook->setSingleMode(true);
-    refreshScreen();
+    refreshScreen(false);
 }
 
 
 void MainWindow::on_actionDouble_Page_triggered()
 {
     currentBook->setSingleMode(false);
-    refreshScreen();
+    refreshScreen(false);
 }

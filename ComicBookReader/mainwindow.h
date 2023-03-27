@@ -39,8 +39,7 @@ private slots:
 
     // Display
     void setImage(QPixmap image);
-    void refreshScreen();
-    void refreshPage(int currPage, int totalPage);
+    void refreshScreen(bool numPageChanged);
     void msgBox(QString msg);
 
     void resizeEvent(QResizeEvent *event);

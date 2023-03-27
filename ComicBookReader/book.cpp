@@ -26,8 +26,7 @@ void Book::setPathToDir(QString path) {
         totalPage = totalPage + 1;
     }
     changeCurrImage();
-    emit pageChanged(tabPathToImage[currPage]);
-    emit changePageCounter(currPage, totalPage);
+    emit pageChanged(true);
 }
 
 void Book::next() {
@@ -39,8 +38,7 @@ void Book::next() {
         }
 
         changeCurrImage();
-        emit pageChanged(tabPathToImage[currPage]);
-        emit changePageCounter(currPage, 0);
+        emit pageChanged(true);
 
     } else {
         emit infoMsgBox("Last page");
@@ -55,8 +53,7 @@ void Book::previous() {
             currPage = currPage - 2;
         }
         changeCurrImage();
-        emit pageChanged(tabPathToImage[currPage]);
-        emit changePageCounter(currPage, 0);
+        emit pageChanged(true);
     } else {
         emit infoMsgBox("First page");
     }
@@ -66,19 +63,13 @@ void Book::previous() {
 void Book::first() {
     currPage=0;
     changeCurrImage();
-    emit pageChanged(tabPathToImage[currPage]);
-    emit changePageCounter(currPage, 0);
+    emit pageChanged(true);
 }
 
 void Book::last() {
     currPage=totalPage-1;
     changeCurrImage();
-    emit pageChanged(tabPathToImage[currPage]);
-    emit changePageCounter(currPage, 0);
-}
-
-QString Book::getCurrImagePath() {
-    return tabPathToImage[currPage];
+    emit pageChanged(true);
 }
 
 QString Book::getRatio() {
@@ -92,8 +83,7 @@ void Book::setRatio(QString r) {
 void Book::setSingleMode(bool val) {
     singleMode = val;
     changeCurrImage();
-    emit pageChanged(tabPathToImage[currPage]);
-    emit changePageCounter(currPage, 0);
+    emit pageChanged(false);
 }
 
 void Book::changeCurrImage() {
@@ -106,4 +96,12 @@ void Book::changeCurrImage() {
 
 QPixmap Book::getCurrImage() {
     return currImage;
+}
+
+int Book::getCurrPage() {
+    return currPage;
+}
+
+int Book::getTotalPage() {
+    return totalPage;
 }

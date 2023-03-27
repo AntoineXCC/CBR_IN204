@@ -34,6 +34,9 @@ QPixmap Image::zoomOut(QPixmap image, QSize valRatio) {
 }
 
 QPixmap Image::combine(QPixmap image1, QPixmap image2) {
+    int meanHeight = (image1.height() + image2.height())/2 + (image1.height() + image2.height()) % 2;
+    image1 = image1.scaledToHeight(meanHeight);
+    image2 = image2.scaledToHeight(meanHeight);
     QImage image(image1.width() + image2.width(), image1.height(), QImage::Format_ARGB32_Premultiplied);
     image.fill(QColor(Qt::transparent));
 

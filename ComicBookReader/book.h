@@ -48,10 +48,10 @@ public:
     // Go to first page
     void first();
 
-    // Get the path of the current image shown
-    QString getCurrImagePath();
     // Get the performed zoom
     QString getRatio();
+    int getTotalPage();
+    int getCurrPage();
 
     QPixmap getCurrImage();
     void changeCurrImage();
@@ -59,9 +59,7 @@ public:
 
 signals:
     // Changing the page to display on the main screen
-    void pageChanged(QString path);
-    // Changing the page counter
-    void changePageCounter(int currPage, int totalPage);
+    void pageChanged(bool numPageChanged);
 
     void infoMsgBox(QString msg);
 
