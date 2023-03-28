@@ -1,7 +1,4 @@
 #include "archiveManager.h"
-#include "QtGui/private/qzipreader_p.h"
-#include "QtGui/private/qzipwriter_p.h"
-
 
 #include <sys/types.h>
 
@@ -21,66 +18,50 @@
 #include <iostream>
 #include <QMessageBox>
 
-// Zip uniquement pour l'instant un dossier entier (à changer pour seulement les images spécifiées)
-bool Zip(QFileInfoList fileList, QString zipPath) {
-    QZipWriter writer(zipPath);
-    if(fileList.size()<=0){
-        qDebug()<<"there is no file to zip, please check it";
-        return false;
+void Zip(QFileInfoList fileList, QString zipPath) {
+  std::string S = zipPath.toStdString();
+  const char* outname = S.c_str();
+
+  struct archive *a;
+  struct archive_entry *entry;
+  struct stat st;
+  char buff[8192];
+  int len;
+  int fd;
+
+  a = archive_write_new();
+  archive_write_set_format_zip(a);
+  archive_write_open_filename(a, outname);
+  for(int i=0;i != fileList.size(); i++){
+    QString filePath=fileList.at(i).filePath();
+    QFile file(filePath);
+
+    std::string filePathStr = filePath.toStdString();
+    const char* filePathChar = filePathStr.c_str();
+    std::string filenameStd = file.fileName().section("/",-1,-1).toStdString();
+    const char* filename = filenameStd.c_str();
+
+    stat(filePathChar, &st);
+    entry = archive_entry_new(); // Note 2
+    archive_entry_set_pathname(entry, filename);
+    archive_entry_set_size(entry, st.st_size); // Note 3
+    archive_entry_set_filetype(entry, AE_IFREG);
+    archive_entry_set_perm(entry, 0644);
+    archive_write_header(a, entry);
+    fd = open(filePathChar, O_RDONLY);
+    len = read(fd, buff, sizeof(buff));
+    while ( len > 0 ) {
+        archive_write_data(a, buff, len);
+        len = read(fd, buff, sizeof(buff));
     }
-    //
-    for(int i=0;i != fileList.size(); i++){
-        QString filePath=fileList.at(i).filePath();
-        QFile file(filePath);
-        QString fileName = file.fileName().section("/",-1,-1);
-        qDebug()<<"fileName:"<<fileName;
-        if(file.exists()){
-            file.open(QIODevice::ReadOnly);
-            writer.addFile(fileName, file.readAll());
-            file.close();
-        }
-        else{
-            qDebug()<<"file not exist:"<<fileName;
-        }
-    }
-    writer.close();
+    close(fd);
+    archive_entry_free(entry);
+  }
+  archive_write_close(a); // Note 4
+  archive_write_free(a); // Note 5
+  std::cout<<"Oui"<<std::endl;
+  std::cout<<zipPath.toStdString()<<std::endl;
 }
-
-
-
-//void write_archive(const char *outname, const char **filename) {
-//  struct archive *a;
-//  struct archive_entry *entry;
-//  struct stat st;
-//  char buff[8192];
-//  int len;
-//  int fd;
-
-//  a = archive_write_new();
-//  archive_write_add_filter_gzip(a);
-//  archive_write_set_format_pax_restricted(a); // Note 1
-//  archive_write_open_filename(a, outname);
-//  while (*filename) {
-//    stat(*filename, &st);
-//    entry = archive_entry_new(); // Note 2
-//    archive_entry_set_pathname(entry, *filename);
-//    archive_entry_set_size(entry, st.st_size); // Note 3
-//    archive_entry_set_filetype(entry, AE_IFREG);
-//    archive_entry_set_perm(entry, 0644);
-//    archive_write_header(a, entry);
-//    fd = open(*filename, O_RDONLY);
-//    len = read(fd, buff, sizeof(buff));
-//    while ( len > 0 ) {
-//        archive_write_data(a, buff, len);
-//        len = read(fd, buff, sizeof(buff));
-//    }
-//    close(fd);
-//    archive_entry_free(entry);
-//    filename++;
-//  }
-//  archive_write_close(a); // Note 4
-//  archive_write_free(a); // Note 5
-//}
 
 int copy_data(struct archive *ar, struct archive *aw) {
   int r;
@@ -104,8 +85,9 @@ int copy_data(struct archive *ar, struct archive *aw) {
 
 // Unzip dans le dossier spécifié
 void Unzip(QString zipPath) {
-  std::string filenameString = zipPath.toStdString();
-  const char* filename = filenameString.c_str();
+  std::string S = zipPath.toStdString();
+  const char* filename = S.c_str();
+  std::cout<<filename<<std::endl;
 
   struct archive *a;
   struct archive *ext;
