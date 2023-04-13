@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVector>
 #include <QPixmap>
+#include <QFileDialog>
 
 class Book : public QObject
 {
@@ -20,10 +21,12 @@ private:
     int currPage;
     // Number of pages
     int totalPage;
-    // SingleMode true ? Otherwise doubleMode
+    // One or two pages shown on the screen
     bool singleMode;
+    // Only used in double page mode -> CoverPage mode (show only the first page if true otherwise show 2 pages)
+    bool coverPageMode;
+    // Current image on screen with no transformation (no zoom, ...)
     QPixmap currImage;
-
 
 public:
     Book();
@@ -35,9 +38,12 @@ public:
     void setRatio(QString r);
     // Set the page mode
     void setSingleMode(bool val);
-
-    // Initalise the comic book -> Not used
-    void initialise();
+    // Set if cover page mode
+    void setCoverPageMode(bool val);
+    // Set current page
+    void setCurrPage(int val);
+    // Update the current image according to the different parameters (current page, singleMode, coverPageMode, ...)
+    void changeCurrImage();
 
     // Go to next page if possible
     void next();
@@ -48,19 +54,22 @@ public:
     // Go to first page
     void first();
 
-    // Get the performed zoom
+    // Return the performed zoom
     QString getRatio();
+    // Return number of pages of the Comic Book
     int getTotalPage();
+    // Return current page number
     int getCurrPage();
-
+    // Return current image shown on screen
     QPixmap getCurrImage();
-    void changeCurrImage();
+    // Return fileInfoList of the pages in l, used to create an archive of the selected images
+    QFileInfoList* getFileInfoList(QList<int> l);
 
 
 signals:
-    // Changing the page to display on the main screen
+    // Changing the image displayed on the screen, boolean tells if page number changed
     void pageChanged(bool numPageChanged);
-
+    // Error/information msg
     void infoMsgBox(QString msg);
 
 

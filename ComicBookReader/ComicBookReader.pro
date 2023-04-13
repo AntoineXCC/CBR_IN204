@@ -17,11 +17,14 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     book.cpp \
     image.cpp \
-    archiveManager.cpp
+    archiveManager.cpp \
+    combinewindow.cpp
 
 HEADERS  += mainwindow.h \
     book.h \
     image.h \
-    archiveManager.h
+    archiveManager.h \
+    combinewindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    combinewindow.ui

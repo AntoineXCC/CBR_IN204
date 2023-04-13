@@ -2,19 +2,15 @@
 #include "image.h"
 #include <QString>
 #include <QDir>
-#include <ui_mainwindow.h>
 #include <QPixmap>
 #include <QMessageBox>
-#include <iostream>
 
 Book::Book() : QObject(), pathToDir(""),
     currPage(0), totalPage(0), ratio(QString("Fit page")),
-    singleMode(true) {
-
+    singleMode(true), coverPageMode(true) {
 }
 
 Book::~Book() {
-
 }
 
 void Book::setPathToDir(QString path) {
@@ -29,9 +25,48 @@ void Book::setPathToDir(QString path) {
     emit pageChanged(true);
 }
 
+void Book::setRatio(QString r) {
+    ratio = r;
+}
+
+void Book::setSingleMode(bool val) {
+    singleMode = val;
+    changeCurrImage();
+    emit pageChanged(false);
+}
+
+void Book::setCoverPageMode(bool val) {
+    setSingleMode(false);
+    coverPageMode = val;
+    if (coverPageMode && currPage != 0) {
+        currPage = currPage - 1 + (currPage % 2);
+    } else {
+        currPage = currPage - (currPage % 2);
+    }
+    changeCurrImage();
+    emit pageChanged(true);
+}
+
+void Book::setCurrPage(int val) {
+    if (val>=0 && val<totalPage) {
+        currPage=val;
+        changeCurrImage();
+        emit pageChanged(true);
+    }
+}
+
+void Book::changeCurrImage() {
+    if (singleMode || currPage==totalPage-1 || (!singleMode && coverPageMode && currPage==0)) {
+        currImage = QPixmap(tabPathToImage[currPage]);
+    } else {
+        currImage = Image::combine(QPixmap(tabPathToImage[currPage]), tabPathToImage[currPage+1] );
+    }
+}
+
+
 void Book::next() {
     if ((currPage<totalPage-1 && singleMode) || currPage<totalPage-2 ) {
-        if (singleMode || currPage+1==totalPage-1) {
+        if (singleMode || currPage+1==totalPage-1 || (!singleMode && currPage==0 && coverPageMode)) {
             currPage = currPage + 1;
         } else {
             currPage = currPage + 2;
@@ -59,7 +94,6 @@ void Book::previous() {
     }
 }
 
-
 void Book::first() {
     currPage=0;
     changeCurrImage();
@@ -67,31 +101,20 @@ void Book::first() {
 }
 
 void Book::last() {
-    currPage=totalPage-1;
+    if (singleMode) {
+        currPage = totalPage - 1;
+    } else if (!singleMode && coverPageMode) {
+        currPage = totalPage - 1 - (totalPage % 2);
+    } else {
+        currPage = totalPage - 1 - ((totalPage - 1) % 2);
+    }
     changeCurrImage();
     emit pageChanged(true);
 }
 
+
 QString Book::getRatio() {
     return ratio;
-}
-
-void Book::setRatio(QString r) {
-    ratio = r;
-}
-
-void Book::setSingleMode(bool val) {
-    singleMode = val;
-    changeCurrImage();
-    emit pageChanged(false);
-}
-
-void Book::changeCurrImage() {
-    if (singleMode || currPage==totalPage-1) {
-        currImage = QPixmap(tabPathToImage[currPage]);
-    } else {
-        currImage = Image::combine(QPixmap(tabPathToImage[currPage]), tabPathToImage[currPage+1] );
-    }
 }
 
 QPixmap Book::getCurrImage() {
@@ -104,4 +127,12 @@ int Book::getCurrPage() {
 
 int Book::getTotalPage() {
     return totalPage;
+}
+
+QFileInfoList* Book::getFileInfoList(QList<int> l) {
+    QFileInfoList* fileList = new QFileInfoList();
+    foreach(int i, l) {
+        fileList->append(QFileInfo(tabPathToImage[i-1]));
+    }
+    return fileList;
 }

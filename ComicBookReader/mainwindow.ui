@@ -135,9 +135,6 @@
         <property name="text">
          <string>First</string>
         </property>
-        <property name="shortcut">
-         <string>Home</string>
-        </property>
        </widget>
       </item>
       <item>
@@ -154,21 +151,15 @@
         <property name="text">
          <string>&lt;</string>
         </property>
-        <property name="shortcut">
-         <string>Left</string>
-        </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="currPageDisplay">
+       <widget class="QLineEdit" name="currPageDisplay">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -202,9 +193,6 @@
         <property name="text">
          <string>&gt;</string>
         </property>
-        <property name="shortcut">
-         <string>Right</string>
-        </property>
        </widget>
       </item>
       <item>
@@ -218,22 +206,12 @@
         <property name="text">
          <string>Last</string>
         </property>
-        <property name="shortcut">
-         <string>End</string>
-        </property>
        </widget>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Zoom</string>
-        </property>
-       </widget>
-      </item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,2,2">
       <item>
        <widget class="QPushButton" name="ZoomIn">
         <property name="text">
@@ -273,13 +251,6 @@
         </item>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="text">
-         <string>Temporaire</string>
-        </property>
-       </widget>
-      </item>
      </layout>
     </item>
    </layout>
@@ -298,7 +269,6 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
-    <addaction name="actionExtract"/>
     <addaction name="actionCombine"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
@@ -313,19 +283,17 @@
      <property name="title">
       <string>Page Mode</string>
      </property>
+     <widget class="QMenu" name="menuDouble_page">
+      <property name="title">
+       <string>Double page</string>
+      </property>
+      <addaction name="actionCover_page"/>
+      <addaction name="actionNo_cover_page"/>
+     </widget>
      <addaction name="actionSingle_Page"/>
-     <addaction name="actionDouble_Page"/>
-    </widget>
-    <widget class="QMenu" name="menuImage_Mode">
-     <property name="title">
-      <string>Image Mode</string>
-     </property>
-     <addaction name="actionRaw"/>
-     <addaction name="actionText_focused"/>
-     <addaction name="actionDrawing_focused"/>
+     <addaction name="menuDouble_page"/>
     </widget>
     <addaction name="menuDisplay_Mode"/>
-    <addaction name="menuImage_Mode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOption"/>
@@ -343,14 +311,12 @@
     <string>Close</string>
    </property>
   </action>
-  <action name="actionExtract">
-   <property name="text">
-    <string>Extract</string>
-   </property>
-  </action>
   <action name="actionCombine">
    <property name="text">
     <string>Combine</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -361,11 +327,6 @@
   <action name="actionSingle_Page">
    <property name="text">
     <string>Single page</string>
-   </property>
-  </action>
-  <action name="actionDouble_Page">
-   <property name="text">
-    <string>Double page</string>
    </property>
   </action>
   <action name="actionRaw">
@@ -381,6 +342,16 @@
   <action name="actionDrawing_focused">
    <property name="text">
     <string>Drawing focused</string>
+   </property>
+  </action>
+  <action name="actionCover_page">
+   <property name="text">
+    <string>Cover page</string>
+   </property>
+  </action>
+  <action name="actionNo_cover_page">
+   <property name="text">
+    <string>No cover page</string>
    </property>
   </action>
  </widget>

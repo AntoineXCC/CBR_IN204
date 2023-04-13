@@ -2,18 +2,16 @@
 #define ARCHIVE_H
 
 #include <QCoreApplication>
-#include <QByteArray>
-#include <QBitArray>
 #include <QString>
-#include <QDebug>
 #include <QFile>
 #include <QFileDialog>
 
 
-const char* QString2ConstCharP(QString Str);
-
-void Unzip(QString zipPath);
+// Extract files from zipPath to path in a folder with the base name of zipPath
+void Unzip(QString zipPath, QString path);
+// Create an archive to zipPath with all files in fileList
 void Zip(QFileInfoList fileList, QString zipPath);
+// Function used in Unzip
 int copy_data(struct archive *ar, struct archive *aw);
 
 #endif // ARCHIVE_H

@@ -1,7 +1,6 @@
 #include "archiveManager.h"
 
 #include <sys/types.h>
-
 #include <sys/stat.h>
 
 #include <archive.h>
@@ -12,11 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <QFile>
-#include <QFileDialog>
-#include <QDir>
 #include <iostream>
-#include <QMessageBox>
 
 void Zip(QFileInfoList fileList, QString zipPath) {
   std::string S = zipPath.toStdString();
@@ -42,9 +37,9 @@ void Zip(QFileInfoList fileList, QString zipPath) {
     const char* filename = filenameStd.c_str();
 
     stat(filePathChar, &st);
-    entry = archive_entry_new(); // Note 2
+    entry = archive_entry_new();
     archive_entry_set_pathname(entry, filename);
-    archive_entry_set_size(entry, st.st_size); // Note 3
+    archive_entry_set_size(entry, st.st_size);
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);
     archive_write_header(a, entry);
@@ -57,37 +52,13 @@ void Zip(QFileInfoList fileList, QString zipPath) {
     close(fd);
     archive_entry_free(entry);
   }
-  archive_write_close(a); // Note 4
-  archive_write_free(a); // Note 5
-  std::cout<<"Oui"<<std::endl;
-  std::cout<<zipPath.toStdString()<<std::endl;
+  archive_write_close(a);
+  archive_write_free(a);
 }
 
-int copy_data(struct archive *ar, struct archive *aw) {
-  int r;
-  const void *buff;
-  size_t size;
-  la_int64_t offset;
-
-  for (;;) {
-    r = archive_read_data_block(ar, &buff, &size, &offset);
-    if (r == ARCHIVE_EOF)
-      return (ARCHIVE_OK);
-    if (r < ARCHIVE_OK)
-      return (r);
-    r = archive_write_data_block(aw, buff, size, offset);
-    if (r < ARCHIVE_OK) {
-      fprintf(stderr, "%s\n", archive_error_string(aw));
-      return (r);
-    }
-  }
-}
-
-// Unzip dans le dossier spécifié
-void Unzip(QString zipPath) {
+void Unzip(QString zipPath, QString path) {
   std::string S = zipPath.toStdString();
   const char* filename = S.c_str();
-  std::cout<<filename<<std::endl;
 
   struct archive *a;
   struct archive *ext;
@@ -96,7 +67,6 @@ void Unzip(QString zipPath) {
   int r;
 
   /* Select the extraction path */
-  QString path = QFileDialog::getExistingDirectory(0, "Extraction path", "../data");
   std::string pathName = path.toStdString() + '/';
 
   /* Select which attributes we want to restore. */
@@ -122,6 +92,9 @@ void Unzip(QString zipPath) {
     if (r < ARCHIVE_WARN)
       exit(1);
     const char* currFile = archive_entry_pathname(entry);
+    // To get only the file and not parent directory
+    std::string tmp = QString(currFile).split('/').last().toStdString();
+    currFile = tmp.c_str();
     const std::string fullOutputPath = pathName + currFile;
     archive_entry_set_pathname(entry, fullOutputPath.c_str());
     r = archive_write_header(ext, entry);
@@ -131,8 +104,9 @@ void Unzip(QString zipPath) {
       r = copy_data(a, ext);
       if (r < ARCHIVE_OK)
         fprintf(stderr, "%s\n", archive_error_string(ext));
-      if (r < ARCHIVE_WARN)
+      if (r < ARCHIVE_WARN) {
         exit(1);
+      }
     }
     r = archive_write_finish_entry(ext);
     if (r < ARCHIVE_OK)
@@ -144,6 +118,28 @@ void Unzip(QString zipPath) {
   archive_read_free(a);
   archive_write_close(ext);
   archive_write_free(ext);
+}
+
+int copy_data(struct archive *ar, struct archive *aw) {
+  int r;
+  const void *buff;
+  size_t size;
+  la_int64_t offset;
+
+  for (;;) {
+    r = archive_read_data_block(ar, &buff, &size, &offset);
+    if (r == ARCHIVE_EOF)
+      return (ARCHIVE_OK);
+    if (r < ARCHIVE_OK) {
+      std::cout<<"Ici"<<std::endl;
+      return (r);
+    }
+    r = archive_write_data_block(aw, buff, size, offset);
+    if (r < ARCHIVE_OK) {
+      fprintf(stderr, "%s\n", archive_error_string(aw));
+      return (r);
+    }
+  }
 }
 
 
